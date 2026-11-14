@@ -99,4 +99,8 @@
     <!-- Regions -->
     <string name="select_region">Select Region</string>
     <string name="all_regions">All Regions</string>
+    <string name="playback_stop">Stop</string>
+    <string name="playback_channel_name">Playback</string>
+    <string name="autostart_channel_name">Open at start</string>
+    <string name="autostart_blocked_text">Your TV did not let the app open by itself. Tap to open.</string>
 </resources>

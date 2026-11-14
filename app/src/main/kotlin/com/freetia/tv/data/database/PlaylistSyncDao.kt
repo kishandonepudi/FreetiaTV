@@ -22,13 +22,15 @@ data class ChannelSourceUpdate(
     val tvgLanguage: String,
     val tvgType: String,
     val catchupEnabled: Boolean,
+    val catchup: String,
+    val catchupSource: String,
     val catchupDays: Int,
     val isAdult: Boolean,
 )
 
 @Dao
 interface PlaylistSyncDao {
-    @Query("SELECT id, streamUrl FROM channels WHERE playlistId = :playlistId")
+    @Query("SELECT id, streamUrl FROM channels WHERE playlistId = :playlistId ORDER BY id")
     suspend fun existingKeys(playlistId: Long): List<ChannelKey>
 
     // ABORT, not REPLACE: REPLACE deletes the old row and would cascade-delete favourites and locks.
@@ -41,6 +43,13 @@ interface PlaylistSyncDao {
     @Query("DELETE FROM channels WHERE id IN (:ids)")
     suspend fun deleteByIds(ids: List<Long>)
 
-    @Query("UPDATE playlists SET epgUrl = :epgUrl WHERE id = :playlistId AND epgUrl = ''")
-    suspend fun setEpgUrlIfEmpty(playlistId: Long, epgUrl: String)
+    @Query("SELECT epgUrl FROM playlists WHERE id = :playlistId")
+    suspend fun epgUrlRef(playlistId: Long): String?
+
+    /**
+     * Saves the header guide link's encrypted-store reference unless one is already set. A plain value left by an
+     * older build is replaced. Returns 0 when nothing changed, so the caller can drop the unused secret.
+     */
+    @Query("UPDATE playlists SET epgUrl = :ref WHERE id = :playlistId AND epgUrl NOT LIKE 'playlist_url:%'")
+    suspend fun setEpgUrlRefIfUnset(playlistId: Long, ref: String): Int
 }

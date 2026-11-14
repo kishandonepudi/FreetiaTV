@@ -1,15 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 320x180dp Android TV / Fire TV launcher banner. Replace with a PNG for store submission. -->
+<!-- 320x180dp Android TV / Fire TV launcher banner: brand gradient + glyph + wordmark.
+     TV quality criterion TV-BN requires the app name in the banner; vector drawables can't hold text, so the
+     wordmark is a PNG rendered by store/assets/render.js. Store listings use store/assets/tv-banner-1280x720.png. -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="rectangle">
             <size android:width="320dp" android:height="180dp" />
-            <solid android:color="@color/primary" />
+            <gradient
+                android:angle="315"
+                android:startColor="@color/brand_blue"
+                android:endColor="@color/brand_violet" />
         </shape>
     </item>
     <item
-        android:width="108dp"
-        android:height="108dp"
-        android:gravity="center"
+        android:width="120dp"
+        android:height="120dp"
+        android:left="8dp"
+        android:gravity="left|center_vertical"
         android:drawable="@drawable/ic_launcher_foreground" />
+    <item
+        android:width="176dp"
+        android:height="48dp"
+        android:left="103dp"
+        android:gravity="left|center_vertical"
+        android:drawable="@drawable/tv_banner_wordmark" />
 </layer-list>

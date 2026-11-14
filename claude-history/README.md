@@ -109,3 +109,4 @@ Build and install:
 adb install -r app/build/outputs/apk/foss/debug/app-foss-debug.apk
 ./gradlew installStoreDebug                  # store build (no playlist) on the connected device
 ```
+- [session-05-v1-full-build.md](session-05-v1-full-build.md) — v1.0 full scope built, QA, signed release

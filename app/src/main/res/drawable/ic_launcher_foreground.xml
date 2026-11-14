@@ -1,3 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Brand glyph: an "F" whose middle arm is a detached play triangle. Kept inside the 66dp adaptive-icon safe zone.
+     Geometry is defined in standards/BRAND_KIT.md; do not redraw by hand. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
@@ -5,11 +8,8 @@
     android:viewportHeight="108">
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M30,38h48a4,4 0,0 1,4 4v28a4,4 0,0 1,-4 4h-48a4,4 0,0 1,-4 -4v-28a4,4 0,0 1,4 -4z" />
-    <path
-        android:fillColor="#2C3E50"
-        android:pathData="M48,47l14,9l-14,9z" />
+        android:pathData="M43,33 H67 A5,5 0 0 1 67,43 H48 V70 A5,5 0 0 1 38,70 V38 A5,5 0 0 1 43,33 Z" />
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M44,78h20v3h-20z" />
+        android:pathData="M53,48.5 Q52,48 52,49.2 V65.8 Q52,67 53,66.5 L69,58.6 Q70.5,57.5 69,56.4 Z" />
 </vector>

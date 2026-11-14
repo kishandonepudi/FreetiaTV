@@ -42,7 +42,7 @@ Delete `keystore.b64` afterwards.
 
 ### 3. Enable GitHub Pages
 
-Go to **Settings → Pages → Source: GitHub Actions**. The `Pages` workflow publishes `docs/` on every push to `main` that changes it. Your privacy policy URL is then `https://OWNER.github.io/REPO/privacy.html`.
+Go to **Settings → Pages → Source: GitHub Actions**. The `Pages` workflow publishes `docs/` on every push to `main` that changes it. Your privacy policy URL is then `https://freetia-tv.github.io/freetia-tv/privacy.html`.
 
 Replace the placeholders `freetia-tv/freetia-tv` and `CONTACT_EMAIL` in `docs/*.html` first.
 
@@ -60,6 +60,9 @@ Replace the placeholders `freetia-tv/freetia-tv` and `CONTACT_EMAIL` in `docs/*.
 4. The `Release` workflow builds the signed `foss` APK and the `store` AAB and APK, writes `SHA256SUMS.txt`, and publishes a GitHub Release.
 
 ## Google Play Console checklist
+
+Full step-by-step guides with form answers: `store/PLAY_SUBMISSION.md`, `store/AMAZON_SUBMISSION.md` and `store/LISTING.md`. Store graphics are in `store/assets/`.
+
 
 - [ ] Upload `FreetiaTV-vX.Y.Z-store.aab` only. Use Play App Signing.
 - [ ] Privacy policy URL: the Pages `privacy.html`.

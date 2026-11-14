@@ -45,3 +45,10 @@
 # ExoPlayer/Media3
 -dontwarn com.google.android.exoplayer2.**
 -keep class androidx.media3.** { *; }
+
+# S2: strip verbose/debug/info logging from release builds (warnings and errors stay).
+-assumenosideeffects class android.util.Log {
+    public static int v(...);
+    public static int d(...);
+    public static int i(...);
+}

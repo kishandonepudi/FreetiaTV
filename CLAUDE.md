@@ -1,4 +1,12 @@
-# Freetia TV Project Documentation
+﻿# Freetia TV Project Documentation
+
+## Mandatory rules for every agent and developer (read first)
+1. **Before any UX/UI, icon, colour, text or copy change:** read `standards/BRAND_KIT.md` and follow it exactly. Run the `brand-ux-reviewer` agent on the change.
+2. **Before any code change:** follow `standards/ENGINEERING_STANDARDS.md` (including the memory budget M1–M9 for low-RAM TVs) and `standards/SECURITY_STANDARDS.md`.
+3. **Before handing back any change:** run `powershell -ExecutionPolicy Bypass -File scripts/quality-gate.ps1 -Fast` and report the result.
+4. **Before building any release APK/AAB, opening a PR or tagging:** run `/release-gate`. It runs the full script plus the `brand-ux-reviewer`, `code-security-reviewer` and `performance-reviewer` agents in parallel. The `.claude/hooks/apk-gate.js` hook blocks release builds until a fresh passing checkpoint exists.
+5. **For UI changes, also do a D-pad pass on the TV emulator** (`Television_4K` AVD in `D:\Android\avd`) and check screenshots before saying the change is done.
+6. **Every Freetia app must show the brand logo** (`ic_brand_mark`, launcher and banner assets) in the placements listed in BRAND_KIT §2.2.
 
 ## Project Overview
 Freetia TV is a free, ad-free IPTV player for Android phones, tablets, Android TV, and Fire TV. It plays channels from user-supplied M3U/M3U8 playlist URLs with support for EPG, reminders, child safety, and full D-pad navigation.
@@ -42,7 +50,7 @@ Freetia TV is a free, ad-free IPTV player for Android phones, tablets, Android T
 #### UI & Styling
 - `ui/MainActivity.kt` - Main activity entry point
 - `ui/theme/Theme.kt` - Material 3 dark/light theme with high-contrast variant
-- `ui/theme/Type.kt` - Typography (large body text for TV, 24sp minimum)
+- `ui/theme/Type.kt` - Typography (TV scale for 960x540dp: 16sp body, 12sp minimum; text sizes set per screen)
 
 #### Preferences & Configuration
 - `data/preferences/PreferencesKeys.kt` - DataStore keys for all settings (40+ keys)
@@ -86,7 +94,7 @@ Freetia TV is a free, ad-free IPTV player for Android phones, tablets, Android T
 - Cold start: < 2 seconds (Fire TV Stick Lite, cache clear enabled)
 - Channel change: < 2 seconds
 - 10,000+ channels: virtualised, paged lists
-- EPG: 7 days × 5,000 channels with incremental updates
+- EPG: 7 days Ã— 5,000 channels with incremental updates
 - Memory: parse M3U/XMLTV in chunks, never fully in memory
 
 ## Security & Privacy
@@ -114,7 +122,8 @@ Freetia TV is a free, ad-free IPTV player for Android phones, tablets, Android T
 5. Add a playlist via the UI or settings
 
 ## Notes for Future Development
-- Code is uncompiled until CI runs; see PROJECT_STATUS.md. Flavors: `foss` (default iptv-org India playlist) and `store` (no playlist) — never add a default URL to `store`
+- v1.0 scope is the full spec and every feature is built; see plan/V1_BUILD_PLAN.md for the per-feature API notes
+- Builds locally with `gradlew.bat` (see PROJECT_STATUS.md); keep the repo at an ASCII-only path. Flavors: `foss` (default iptv-org India playlist) and `store` (no playlist) â€” never add a default URL to `store`
 - Device detection is runtime-based; single APK supports all targets
 - Cache policy is strict: full clear on exit (except settings/playlists) to comply with store guidelines
 - Reminders use AlarmManager + WorkManager for reliability

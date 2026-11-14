@@ -6,79 +6,42 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ReminderDao {
+    /** One reminder per channel + start time; setting it again replaces the flags and lead time. */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(reminder: ReminderEntity): Long
-
-    @Update
-    suspend fun update(reminder: ReminderEntity)
-
-    @Delete
-    suspend fun delete(reminder: ReminderEntity)
+    suspend fun upsert(reminder: ReminderEntity): Long
 
     @Query("DELETE FROM reminders WHERE id = :id")
     suspend fun deleteById(id: Long)
 
+    @Query("DELETE FROM reminders WHERE channelId = :channelId AND startTime = :startTime")
+    suspend fun deleteForProgramme(channelId: Long, startTime: Long)
+
     @Query("SELECT * FROM reminders WHERE id = :id")
     suspend fun getById(id: Long): ReminderEntity?
 
-    @Query("SELECT * FROM reminders WHERE userId = :userId ORDER BY reminderTime ASC")
-    fun getRemindersFlow(userId: String = "default"): Flow<List<ReminderEntity>>
+    @Query("SELECT * FROM reminders WHERE channelId = :channelId AND startTime = :startTime LIMIT 1")
+    suspend fun findForProgramme(channelId: Long, startTime: Long): ReminderEntity?
 
-    @Query("SELECT * FROM reminders WHERE userId = :userId ORDER BY reminderTime ASC")
-    suspend fun getReminders(userId: String = "default"): List<ReminderEntity>
+    @Query("SELECT EXISTS(SELECT 1 FROM reminders WHERE channelId = :channelId AND startTime = :startTime)")
+    fun observeHasReminder(channelId: Long, startTime: Long): Flow<Boolean>
 
-    @Query("""
-        SELECT * FROM reminders
-        WHERE userId = :userId AND reminderTime > :now AND reminderTime < :endTime
-        ORDER BY reminderTime ASC
-    """)
-    suspend fun getUpcomingReminders(
-        userId: String = "default",
-        now: Long = System.currentTimeMillis(),
-        endTime: Long = System.currentTimeMillis() + 24L * 60 * 60 * 1000
-    ): List<ReminderEntity>
+    /** Settings > Reminders list: programmes that have not ended yet. */
+    @Query("SELECT * FROM reminders WHERE stopTime = 0 OR stopTime > :now ORDER BY reminderTime ASC LIMIT :limit")
+    fun observeUpcoming(now: Long, limit: Int = 200): Flow<List<ReminderEntity>>
 
-    @Query("""
-        SELECT * FROM reminders
-        WHERE userId = :userId AND reminderTime <= :now AND isNotified = 0
-        ORDER BY reminderTime ASC
-    """)
-    suspend fun getPendingNotifications(userId: String = "default", now: Long = System.currentTimeMillis()): List<ReminderEntity>
+    /** Reminders to (re)schedule with AlarmManager, e.g. after boot. */
+    @Query("SELECT * FROM reminders WHERE isNotified = 0 AND reminderTime > :now ORDER BY reminderTime ASC LIMIT :limit")
+    suspend fun getFuture(now: Long, limit: Int = 200): List<ReminderEntity>
 
-    @Query("""
-        UPDATE reminders SET isNotified = 1 WHERE id = :id
-    """)
+    @Query("SELECT * FROM reminders WHERE isNotified = 0 AND reminderTime <= :now ORDER BY reminderTime ASC LIMIT :limit")
+    suspend fun getDue(now: Long, limit: Int = 50): List<ReminderEntity>
+
+    @Query("UPDATE reminders SET isNotified = 1 WHERE id = :id")
     suspend fun markNotified(id: Long)
 
-    @Query("""
-        UPDATE reminders SET isWoken = 1 WHERE id = :id
-    """)
+    @Query("UPDATE reminders SET isWoken = 1 WHERE id = :id")
     suspend fun markWoken(id: Long)
 
-    @Query("""
-        SELECT * FROM reminders
-        WHERE userId = :userId AND channelId = :channelId
-        ORDER BY reminderTime DESC
-    """)
-    suspend fun getRemindersByChannel(channelId: Long, userId: String = "default"): List<ReminderEntity>
-
-    @Query("SELECT COUNT(*) FROM reminders WHERE userId = :userId")
-    suspend fun getReminderCount(userId: String = "default"): Int
-
-    @Query("""
-        DELETE FROM reminders
-        WHERE userId = :userId AND reminderTime < :cutoffTime
-    """)
-    suspend fun deletePastReminders(userId: String, cutoffTime: Long = System.currentTimeMillis())
-
-    @Query("""
-        SELECT * FROM reminders
-        WHERE userId = :userId AND isNotified = 0
-        ORDER BY reminderTime ASC
-        LIMIT 1
-    """)
-    suspend fun getNextUnnotifiedReminder(userId: String = "default"): ReminderEntity?
-
-    @Query("DELETE FROM reminders WHERE userId = :userId")
-    suspend fun deleteAllForUser(userId: String)
+    @Query("DELETE FROM reminders WHERE stopTime != 0 AND stopTime < :cutoffTime")
+    suspend fun deleteEnded(cutoffTime: Long)
 }

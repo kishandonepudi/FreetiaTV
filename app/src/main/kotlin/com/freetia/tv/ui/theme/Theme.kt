@@ -1,79 +1,94 @@
 package com.freetia.tv.ui.theme
 
 import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.*
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Color(0xFF2C3E50),
-    onPrimary = Color.White,
-    primaryContainer = Color(0xFF34495E),
-    onPrimaryContainer = Color(0xFFECF0F1),
-    secondary = Color(0xFF3498DB),
-    onSecondary = Color.White,
-    secondaryContainer = Color(0xFF2980B9),
-    onSecondaryContainer = Color(0xFFECF0F1),
-    tertiary = Color(0xFF1ABC9C),
-    onTertiary = Color.White,
-    error = Color(0xFFE74C3C),
-    onError = Color.White,
-    background = Color(0xFF1A1A1A),
-    onBackground = Color.White,
-    surface = Color(0xFF262626),
-    onSurface = Color.White,
-    surfaceVariant = Color(0xFF3F3F3F),
-    onSurfaceVariant = Color(0xFFB0B0B0)
+private fun darkScheme(b: BrandColors): ColorScheme = darkColorScheme(
+    primary = b.ink,
+    onPrimary = b.textPrimary,
+    primaryContainer = b.surfaceVariant,
+    onPrimaryContainer = b.textPrimary,
+    secondary = b.blue,
+    onSecondary = b.textPrimary,
+    secondaryContainer = b.surfaceVariant,
+    onSecondaryContainer = b.textPrimary,
+    tertiary = b.violet,
+    onTertiary = b.textPrimary,
+    error = b.error,
+    onError = b.textPrimary,
+    background = b.ink,
+    onBackground = b.textPrimary,
+    surface = b.surface,
+    onSurface = b.textPrimary,
+    surfaceVariant = b.surfaceVariant,
+    onSurfaceVariant = b.textMuted,
 )
 
+// Light theme: brand ink becomes the text colour, accents stay brand blue/violet.
 private val LightColorScheme = lightColorScheme(
-    primary = Color(0xFF2C3E50),
+    primary = DefaultBrand.blue,
     onPrimary = Color.White,
-    primaryContainer = Color(0xFFECF0F1),
-    onPrimaryContainer = Color(0xFF2C3E50),
-    secondary = Color(0xFF3498DB),
+    primaryContainer = DefaultBrand.blue.copy(alpha = 0.12f),
+    onPrimaryContainer = DefaultBrand.ink,
+    secondary = DefaultBrand.violet,
     onSecondary = Color.White,
-    secondaryContainer = Color(0xFFE3F2FD),
-    onSecondaryContainer = Color(0xFF2980B9),
-    tertiary = Color(0xFF1ABC9C),
+    secondaryContainer = DefaultBrand.violet.copy(alpha = 0.12f),
+    onSecondaryContainer = DefaultBrand.ink,
+    tertiary = DefaultBrand.violet,
     onTertiary = Color.White,
-    error = Color(0xFFE74C3C),
+    error = DefaultBrand.error,
     onError = Color.White,
-    background = Color(0xFFFAFAFA),
-    onBackground = Color(0xFF1A1A1A),
-    surface = Color(0xFFFFFFFF),
-    onSurface = Color(0xFF1A1A1A),
-    surfaceVariant = Color(0xFFECECEC),
-    onSurfaceVariant = Color(0xFF505050)
+    background = Color.White,
+    onBackground = DefaultBrand.ink,
+    surface = Color.White,
+    onSurface = DefaultBrand.ink,
+    surfaceVariant = DefaultBrand.ink.copy(alpha = 0.06f),
+    onSurfaceVariant = DefaultBrand.inkMuted,
 )
 
 @Composable
 fun FreetiaTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    highContrast: Boolean = false,
+    textSizePercent: Int = 100,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+    val brand = if (highContrast) HighContrastBrand else DefaultBrand
+    val colorScheme = remember(darkTheme, highContrast) {
+        if (darkTheme || highContrast) darkScheme(brand) else LightColorScheme
     }
     val view = LocalView.current
     if (!view.isInEditMode) {
+        // Bar colour comes from the window theme (colorPrimaryDark); window.statusBarColor is deprecated on API 35.
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view)?.isAppearanceLightStatusBars = !darkTheme
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme && !highContrast
         }
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    // Scales every sp (typography and fixed sizes alike) on top of the system font scale; rows size to content.
+    val systemDensity = LocalDensity.current
+    val density = remember(systemDensity, textSizePercent) {
+        Density(systemDensity.density, effectiveFontScale(systemDensity.fontScale, textSizePercent))
+    }
+    CompositionLocalProvider(LocalBrand provides brand, LocalDensity provides density) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content
+        )
+    }
 }

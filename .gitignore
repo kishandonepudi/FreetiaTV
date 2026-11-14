@@ -28,3 +28,7 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Local release-gate checkpoints (machine-specific; CI runs its own gate)
+.claude/checkpoints/
+.claude/settings.local.json

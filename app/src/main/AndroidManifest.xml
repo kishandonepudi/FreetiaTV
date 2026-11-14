@@ -3,11 +3,27 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Auto-start on TV is opt-in: AutoStartWorker does nothing unless AUTO_START_ON_TV is on (default off). -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Reminders; requested at runtime (API 33+) when the user sets the first reminder. WAKE_LOCK comes from WorkManager. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Background play (§3.11): PlaybackService is a mediaPlayback foreground service. WAKE_LOCK keeps audio playing with the screen off. -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!-- Reminders: exact alarms where the user allows them (API 31+ opt-in; we fall back to inexact alarms and say so),
+         and a full-screen intent to wake the screen and open the channel (API 34+ is user-revocable, checked at runtime). -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+
+    <queries>
+        <!-- Library voice search checks that a recognizer exists before showing the mic. -->
+        <intent>
+            <action android:name="android.speech.action.RECOGNIZE_SPEECH" />
+        </intent>
+    </queries>
 
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
     <uses-feature android:name="android.software.leanback" android:required="false" />
@@ -17,6 +33,7 @@
     <application
         android:name=".FreetiaApp"
         android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
         android:banner="@drawable/tv_banner"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -26,11 +43,13 @@
 
         <activity
             android:name=".ui.MainActivity"
+            android:theme="@style/Theme.Freetia.Starting"
             android:label="@string/launcher_name"
             android:exported="true"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|smallestScreenSize"
             android:launchMode="singleTask"
-            android:supportsPictureInPicture="false">
+            android:enableOnBackInvokedCallback="false"
+            android:supportsPictureInPicture="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -41,6 +60,9 @@
             </intent-filter>
         </activity>
 
+        <!-- Exported because the lock screen, Bluetooth and Media3 bind through the MediaSessionService intent-filter;
+             onConnect rejects any controller that is not this app or the system (S5). Only started while background
+             play is on for the playing playlist. TV-NP: video is switched off in the background, only audio goes on. -->
         <service
             android:name=".playback.PlaybackService"
             android:exported="true"
@@ -50,6 +72,8 @@
             </intent-filter>
         </service>
 
+        <!-- Exported because BOOT_COMPLETED is a system broadcast; the receiver checks the action (S5).
+             AutoStartWorker returns early unless the user turned on AUTO_START_ON_TV (default off). -->
         <receiver
             android:name=".receiver.BootReceiver"
             android:exported="true">

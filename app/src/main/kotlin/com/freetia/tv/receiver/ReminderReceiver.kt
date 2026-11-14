@@ -3,32 +3,35 @@ package com.freetia.tv.receiver
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.freetia.tv.FreetiaApp
+import com.freetia.tv.data.epg.ReminderNotifier
+import com.freetia.tv.data.epg.ReminderScheduler
 import android.util.Log
-import androidx.work.Data
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import com.freetia.tv.work.ReminderWorker
+import com.freetia.tv.BuildConfig
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
+/** Not exported: only our own PendingIntents reach it. The extra is a row id; programme names are read from Room. */
 class ReminderReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action == "com.freetia.action.REMINDER_ALARM") {
-            val reminderId = intent.getLongExtra("reminder_id", -1)
-            val programmeName = intent.getStringExtra("programme_name") ?: "Programme"
-            val channelId = intent.getLongExtra("channel_id", -1)
-
-            Log.d("ReminderReceiver", "Reminder triggered for: $programmeName")
-
-            val data = Data.Builder()
-                .putLong("reminder_id", reminderId)
-                .putString("programme_name", programmeName)
-                .putLong("channel_id", channelId)
-                .build()
-
-            val workRequest = OneTimeWorkRequestBuilder<ReminderWorker>()
-                .setInputData(data)
-                .build()
-
-            WorkManager.getInstance(context).enqueue(workRequest)
+        if (intent.action != ReminderScheduler.ACTION) return
+        val reminderId = intent.getLongExtra(ReminderScheduler.EXTRA_REMINDER_ID, -1L)
+        if (reminderId <= 0) return
+        val app = context.applicationContext as FreetiaApp
+        val pending = goAsync()
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                ReminderNotifier.fire(app, reminderId)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                // A broken reminder must not crash the app from the background. Type only: messages may quote titles.
+                if (BuildConfig.DEBUG) Log.w("ReminderReceiver", "Reminder failed: ${e.javaClass.simpleName}")
+            } finally {
+                pending.finish()
+            }
         }
     }
 }

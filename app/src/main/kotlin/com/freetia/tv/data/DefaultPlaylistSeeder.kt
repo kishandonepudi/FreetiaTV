@@ -1,13 +1,9 @@
 package com.freetia.tv.data
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
 import com.freetia.tv.BuildConfig
 import com.freetia.tv.data.model.PlaylistEntity
-import com.freetia.tv.data.preferences.PreferencesKeys
 import com.freetia.tv.data.repository.PlaylistRepository
-import kotlinx.coroutines.flow.first
+import com.freetia.tv.data.settings.SettingsRepository
 
 /**
  * Adds the flavor's default playlist once, on first run. Empty URL (store flavor) = no-op.
@@ -15,24 +11,25 @@ import kotlinx.coroutines.flow.first
  */
 class DefaultPlaylistSeeder(
     private val repository: PlaylistRepository,
-    private val settings: DataStore<Preferences>,
+    private val settings: SettingsRepository,
 ) {
     suspend fun seedIfNeeded(): Boolean {
         if (BuildConfig.DEFAULT_PLAYLIST_URL.isBlank()) return false
-        if (settings.data.first()[PreferencesKeys.DEFAULT_PLAYLIST_SEEDED] == true) return false
+        if (settings.defaultPlaylistSeeded.get()) return false
 
         repository.add(
             PlaylistEntity(
                 name = BuildConfig.DEFAULT_PLAYLIST_NAME,
-                sourceUrl = BuildConfig.DEFAULT_PLAYLIST_URL,
+                sourceUrl = "",
                 region = BuildConfig.DEFAULT_PLAYLIST_REGION,
                 isDefault = true,
                 updateOnStartup = true,
                 resumeLastChannel = true,
                 backgroundRefreshIntervalMinutes = 24 * 60,
-            )
+            ),
+            url = BuildConfig.DEFAULT_PLAYLIST_URL,
         )
-        settings.edit { it[PreferencesKeys.DEFAULT_PLAYLIST_SEEDED] = true }
+        settings.defaultPlaylistSeeded.set(true)
         return true
     }
 }

@@ -60,20 +60,26 @@ interface EpgDao {
         endTime: Long
     ): List<EpgProgrammeEntity>
 
+    /**
+     * EPG grid rows: programmes overlapping [from, to) for one page of channels (by tvg-id). The grid pages its
+     * channel rows and asks for each visible window, so 7 days × 5,000 channels is never loaded at once.
+     */
     @Query("""
-        SELECT ep.* FROM epg_programmes ep
-        JOIN epg_channels ec ON ep.epgChannelId = ec.id
-        WHERE ep.start >= :startTime AND ep.start < :endTime
-        ORDER BY ec.channelName ASC, ep.start ASC
+        SELECT * FROM epg_programmes
+        WHERE tvgId IN (:tvgIds) AND stop > :from AND start < :to
+        ORDER BY tvgId ASC, start ASC
+        LIMIT :limit
     """)
-    suspend fun getGridView(startTime: Long, endTime: Long): List<EpgProgrammeEntity>
+    suspend fun getGridWindow(tvgIds: List<String>, from: Long, to: Long, limit: Int = 2_000): List<EpgProgrammeEntity>
 
+    /** §3.9 search by programme title or genre; raw term, % wrapping here. Only programmes not yet ended. */
     @Query("""
-        SELECT ep.* FROM epg_programmes ep
-        WHERE ep.title LIKE :query OR ep.description LIKE :query
-        ORDER BY ep.start DESC
+        SELECT * FROM epg_programmes
+        WHERE (title LIKE '%' || :query || '%' OR category LIKE '%' || :query || '%') AND stop > :now
+        ORDER BY start ASC
+        LIMIT :limit
     """)
-    suspend fun searchProgrammes(query: String): List<EpgProgrammeEntity>
+    suspend fun searchProgrammes(query: String, now: Long, limit: Int = 100): List<EpgProgrammeEntity>
 
     @Query("""
         SELECT ep.* FROM epg_programmes ep
@@ -104,10 +110,11 @@ interface EpgDao {
 
     @Query("""
         SELECT ep.* FROM epg_programmes ep
-        WHERE ep.category LIKE :category
-        ORDER BY ep.start DESC
+        WHERE ep.category LIKE :category AND ep.stop > :now
+        ORDER BY ep.start ASC
+        LIMIT :limit
     """)
-    suspend fun getProgrammesByCategory(category: String): List<EpgProgrammeEntity>
+    suspend fun getProgrammesByCategory(category: String, now: Long, limit: Int = 100): List<EpgProgrammeEntity>
 
     @Query("DELETE FROM epg_channels WHERE channelId = :channelId")
     suspend fun deleteEpgChannelByChannelId(channelId: Long)
@@ -117,4 +124,69 @@ interface EpgDao {
 
     @Query("DELETE FROM epg_channels")
     suspend fun deleteAllEpgChannels()
+
+    /** Programmes airing in [from, to) for a playlist channel, matched by channel id or its tvg-id. */
+    @Query("""
+        SELECT ep.* FROM epg_programmes ep
+        JOIN epg_channels ec ON ep.epgChannelId = ec.id
+        WHERE (ec.channelId = :channelId OR (:tvgId != '' AND ec.epgChannelId = :tvgId))
+        AND ep.stop > :from AND ep.start < :to
+        ORDER BY ep.start ASC
+        LIMIT :limit
+    """)
+    fun observeSchedule(channelId: Long, tvgId: String, from: Long, to: Long, limit: Int = 4): Flow<List<EpgProgrammeEntity>>
+
+    @Query("SELECT channelId, epgChannelId FROM epg_channels WHERE channelId IN (:channelIds) LIMIT 1000")
+    suspend fun getEpgRefs(channelIds: List<Long>): List<EpgChannelRef>
+
+    @Query("""
+        SELECT ec.* FROM epg_channels ec JOIN channels c ON ec.channelId = c.id
+        WHERE c.playlistId = :playlistId
+        LIMIT 100000
+    """)
+    suspend fun getEpgChannelsForPlaylist(playlistId: Long): List<EpgChannelEntity>
+
+    /**
+     * §3.9 search by programme title, genre or channel name, not yet ended. [query] must be LIKE-escaped with `\`.
+     * Child Safe, dead-stream and region filters mirror ChannelFilter / RegionFilter (country and language are
+     * upper/lower-case codes; channels with no tag are kept).
+     */
+    @Query("""
+        SELECT ep.id AS programmeId, ep.title AS title, ep.category AS category, ep.description AS description,
+               ep.start AS start, ep.stop AS stop, c.id AS channelId, c.name AS channelName
+        FROM epg_programmes ep
+        JOIN epg_channels ec ON ep.epgChannelId = ec.id
+        JOIN channels c ON ec.channelId = c.id
+        WHERE ep.stop > :now
+        AND (:playlistId = 0 OR c.playlistId = :playlistId)
+        AND (:hideAdult = 0 OR (c.isAdult = 0 AND c.isMarkedAdult = 0))
+        AND (:hideDead = 0 OR c.isDead = 0)
+        AND (:country = '' OR c.tvgCountry = '' OR instr(';' || upper(replace(replace(c.tvgCountry, ',', ';'), '|', ';')) || ';', ';' || :country || ';') > 0)
+        AND (:language = '' OR c.tvgLanguage = '' OR instr(';' || lower(replace(replace(c.tvgLanguage, ',', ';'), '|', ';')) || ';', ';' || :language || ';') > 0)
+        AND (ep.title LIKE '%' || :query || '%' ESCAPE '\' OR ep.category LIKE '%' || :query || '%' ESCAPE '\' OR c.name LIKE '%' || :query || '%' ESCAPE '\')
+        ORDER BY CASE WHEN ep.start <= :now THEN 0 ELSE 1 END, ep.start ASC
+        LIMIT :limit
+    """)
+    suspend fun searchGuide(
+        query: String, now: Long, playlistId: Long, hideAdult: Boolean, hideDead: Boolean,
+        country: String, language: String, limit: Int = 100,
+    ): List<EpgSearchRow>
+
+    @Query("SELECT EXISTS(SELECT 1 FROM epg_programmes WHERE stop > :now)")
+    suspend fun hasUpcoming(now: Long): Boolean
 }
+
+/** Guide lookup row: which XMLTV channel id a playlist channel resolves to. */
+data class EpgChannelRef(val channelId: Long, val epgChannelId: String)
+
+/** One EPG search hit with the channel it airs on. */
+data class EpgSearchRow(
+    val programmeId: Long,
+    val title: String,
+    val category: String,
+    val description: String,
+    val start: Long,
+    val stop: Long,
+    val channelId: Long,
+    val channelName: String,
+)

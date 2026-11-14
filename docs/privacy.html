@@ -20,30 +20,53 @@
     <li>No account. No sign-in.</li>
     <li>No analytics, no advertising, no tracking SDKs.</li>
     <li>Everything you set up stays on your device.</li>
+    <li>No server: the app talks only to addresses you enter.</li>
   </ul>
 
   <h2>What is stored on your device</h2>
-  <p>Your playlists, channel lists, favourites, groups, locks, reminders, programme guide data and settings are stored only on your device. Playlist links can contain passwords or tokens, so they are stored encrypted. Your PIN and recovery code are stored only as salted hashes, never as plain text.</p>
-  <p>Uninstalling the app deletes this data. Freetia TV turns off Android cloud backup, so this data is not copied to Google or Amazon servers.</p>
+  <p>Your playlists, their channel lists, favourites, groups, profiles, reminders, the last channel you watched and your settings are stored only on your device.</p>
+  <ul>
+    <li>Your PIN, recovery code and security answer are stored only as salted hashes. They cannot be read back.</li>
+    <li>Playlist links and guide links can contain passwords or tokens. They are stored encrypted on your device and are only ever sent to the address you entered.</li>
+    <li>All of this is excluded from cloud backup and device transfer. Freetia TV turns off Android cloud backup, so none of it is copied to Google or Amazon servers.</li>
+  </ul>
+  <p>Clearing the app's data in your device settings, or uninstalling the app, deletes this data.</p>
 
   <h2>Network requests</h2>
   <p>Freetia TV only connects to addresses you choose:</p>
   <ul>
-    <li>playlist links you add,</li>
-    <li>programme guide (EPG) links from those playlists or that you add,</li>
-    <li>the streams and channel logos listed in those playlists.</li>
+    <li>playlist links and guide links you add,</li>
+    <li>the streams and channel logos listed in those playlists,</li>
+    <li>health-check requests to the streams in your playlists, to find streams that no longer work.</li>
   </ul>
-  <p>The GitHub (foss) build also downloads one public starter playlist on first run, from <code>https://iptv-org.github.io/iptv/countries/in.m3u</code>. You can delete it at any time. The store builds do not do this.</p>
-  <p>Those servers are run by third parties, who may see your IP address and request details as with any website. Their own privacy policies apply.</p>
+  <p>The GitHub (foss) build also downloads one public starter playlist on first run, from <code>https://iptv-org.github.io/iptv/countries/in.m3u</code>. The store builds do not do this.</p>
+  <p>Those servers are run by third parties, who may see your IP address and request details as with any website. Their own privacy policies apply. Freetia TV has no server of its own.</p>
 
-  <h2>Exporting settings</h2>
-  <p>If you export your settings, the file is saved where you choose. Your PIN hash is left out unless you choose to include it.</p>
+  <h2>Export files and diagnostics</h2>
+  <ul>
+    <li><strong>Export files:</strong> you choose where an export file is saved, and it stays there. Freetia TV does not upload it. A plain export file contains no playlist links. Links are included only inside files that you protect with a passphrase, and they are encrypted.</li>
+    <li><strong>QR and typed codes:</strong> they are shown on your screen and contain the same settings data. Keep them to yourself if they include links.</li>
+    <li><strong>Diagnostics report:</strong> only sent when you choose "Send report", through the share menu on your device. It contains no playlist links and no personal data.</li>
+  </ul>
+
+  <h2>Permissions</h2>
+  <ul>
+    <li><strong>Internet and network state:</strong> to load your playlists, logos and streams.</li>
+    <li><strong>Notifications:</strong> to show programme reminders you set and the background-play controls. Android asks you first.</li>
+    <li><strong>Exact alarms (optional):</strong> so a reminder arrives at the right minute. Without it, a reminder can arrive a few minutes late.</li>
+    <li><strong>Full-screen notification (optional):</strong> so a reminder can wake the screen. Without it, a reminder is an ordinary notification.</li>
+    <li><strong>Run at startup:</strong> used only if you turn on auto-start on TV. It is off unless you turn it on.</li>
+    <li><strong>Foreground service for media playback:</strong> keeps audio playing, with a notification, when you leave the app while background play is on.</li>
+  </ul>
+
+  <h2>No analytics, accounts or ads</h2>
+  <p>Freetia TV has no analytics, no crash-reporting service, no ads and no accounts.</p>
 
   <h2>Children</h2>
   <p>Freetia TV collects no personal data from anyone, including children.</p>
 
   <h2>Contact</h2>
-  <p>Questions: <a href="mailto:gvlandcompany@gmail.com">gvlandcompany@gmail.com</a>, or open an issue at <a href="https://github.com/freetia-tv/freetia-tv/issues">github.com/freetia-tv/freetia-tv</a>.</p>
+  <p>Questions: <a href="mailto:CONTACT_EMAIL">CONTACT_EMAIL</a>, or open an issue at <a href="https://github.com/freetia-tv/freetia-tv/issues">github.com/freetia-tv/freetia-tv</a>.</p>
 </main>
 <footer>
   <p>Freetia TV is free, open-source software under the Apache License 2.0. No ads, no accounts, no tracking.</p>

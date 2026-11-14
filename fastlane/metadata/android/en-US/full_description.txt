@@ -1,38 +1,54 @@
-Freetia TV is a free, ad-free player for M3U and M3U8 playlists that you already have. Paste your playlist link and watch with your remote, just like a regular TV.
+Freetia TV is a free, ad-free player for M3U and M3U8 playlists that you already have. Add your playlist link and watch with your remote, just like a regular TV. It also works with touch on phones and tablets.
 
 Freetia TV does not include any channels. You add your own playlists.
 
-Easy with a remote
-• Up/Down changes channel, OK opens the channel list, Back returns
-• Number keys jump straight to a channel
-• Large text, big focus outlines and a high-contrast mode
-• Every screen shows which buttons to press
-
-Your playlists, your way
-• Save as many playlists as you like and set their order
-• Opens your default playlist on start and can resume your last channel
-• Updates playlists in the background without making you wait
-• Favourites, custom groups and recently watched
-• Region and category filters
+Your playlists
+• Add several playlists, put them in order and choose which one opens first
+• Pick what happens at startup, and keep playlists up to date automatically
+• Choose your region so the list shows what matters to you
+• Favourites, your own groups and recently watched channels
+• Search by name, or speak your search with voice search
+• A health check marks streams that no longer work
 
 Watching
-• HLS, DASH and MPEG-TS streams
-• Choose audio language and turn captions on or off
-• Automatic quality with a notice when the network slows down
-• Buffer settings for slow or fast connections
-• Now and next programme information
+• Full-screen player: Up/Down changes channel, number keys jump straight to a channel, Back returns
+• Picks up where you left off with your last channel
+• Choose the audio track and turn captions on, with your own caption style
+• See the stream's resolution and get a notice when quality changes
+• Buffer presets for slow or fast connections
 • Sleep timer
+• Keep listening in the background, and picture-in-picture on phones
+• HLS, DASH and MPEG-TS streams
 
-Family safety
-• Child Safe Mode hides adult channels
-• Lock any channel with a PIN
-• PIN recovery code
+Programme guide
+• Full guide grid when your playlist or guide link includes programme information
+• Search the guide
+• Reminders for programmes you choose
+• Catch-up for channels that support it
+
+Family controls
+• Child Safe Mode, protected by a PIN
+• A recovery code and a security question in case you forget the PIN
+• Lock single channels or whole categories
+• Profiles, including a child profile
+
+Easy with a remote
+• Every screen shows which buttons to press
+• Start Freetia TV automatically when your TV turns on (optional, off until you turn it on)
+• Large text options, a high contrast theme and screen reader support
+• Settings for playback, display, startup, sleep, reminders, playlists and cache
+
+Backup and move
+• Export your settings and playlists to a file
+• Protect the file with a passphrase to include playlist links
+• Move to another device with a file, a QR code or a typed code
+• Diagnostics screen to share with support when you choose
 
 Private
 • No account
 • No ads
 • No analytics or tracking
-• Playlist links are stored encrypted on your device
+• Playlist links stay on your device, are stored encrypted and are never backed up to the cloud
 
 Content notice
 Freetia TV is a media player only. It does not provide, host or sell any content. You are responsible for making sure you have the right to watch the content in the playlists you add.

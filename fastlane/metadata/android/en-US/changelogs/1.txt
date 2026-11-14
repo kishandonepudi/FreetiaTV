@@ -1,6 +1,8 @@
-First release.
-• Play your own M3U/M3U8 playlists
-• Full remote control navigation
-• Multiple playlists with priority order
-• Favourites, regions, audio and caption choice
-• Child Safe Mode, channel locks and sleep timer
+Freetia TV 1.0
+• Play your own M3U/M3U8 playlists, with priority, startup rules and auto-update
+• Favourites, groups, recents, search and voice search
+• Full programme guide, reminders and catch-up
+• Child Safe Mode with PIN, channel locks and profiles
+• Sleep timer, background play and phone picture-in-picture
+• Export and import with a file, QR code or typed code
+• Full remote control and accessibility support

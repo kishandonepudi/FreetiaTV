@@ -27,14 +27,13 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: "8.10.2"
+          gradle-version: "8.11.1"
 
-      - name: Unit tests
-        run: gradle testFossDebugUnitTest --stacktrace
+      - name: Quality gate (tests, brand, security, manifest — standards/RELEASE_GATE.md)
+        run: bash scripts/quality-gate.sh
 
       - name: Lint
         run: gradle lintFossDebug
-        continue-on-error: true
 
       - name: Assemble debug APK
         run: gradle assembleFossDebug --stacktrace
