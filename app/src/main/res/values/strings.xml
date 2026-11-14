@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Freetia TV</string>
+    <string name="launcher_name">Freetia</string>
+    <string name="app_description">Free &amp; open-source IPTV player for M3U playlists</string>
+
+    <!-- Navigation -->
+    <string name="ok_watch">OK: Watch</string>
+    <string name="up_down_browse">↑↓: Browse</string>
+    <string name="back_return">Back: Return</string>
+    <string name="back_again_to_exit">Press Back again to exit</string>
+    <string name="exiting_app">Exiting app...</string>
+
+    <!-- Playlist -->
+    <string name="playlists">Playlists</string>
+    <string name="add_playlist">Add Playlist</string>
+    <string name="edit_playlist">Edit Playlist</string>
+    <string name="delete_playlist">Delete Playlist</string>
+    <string name="no_playlists">No playlists. Add one to get started.</string>
+    <string name="playlist_name">Playlist Name</string>
+    <string name="playlist_url">Playlist URL (M3U/M3U8)</string>
+    <string name="update_on_startup">Update when app starts</string>
+    <string name="background_refresh_interval">Background refresh interval (minutes)</string>
+    <string name="allow_background_play">Allow background play</string>
+    <string name="resume_last_channel">Resume last channel</string>
+    <string name="set_as_default">Set as default</string>
+    <string name="move_up">Move Up</string>
+    <string name="move_down">Move Down</string>
+
+    <!-- Channels -->
+    <string name="channels">Channels</string>
+    <string name="no_channels">No channels loaded</string>
+    <string name="channel_number">Channel %d</string>
+    <string name="searching_channels">Searching...</string>
+    <string name="all_channels">All Channels</string>
+    <string name="favourites">Favourites</string>
+    <string name="recents">Recently Watched</string>
+    <string name="locked">Locked</string>
+    <string name="unlock_required">PIN required to unlock</string>
+
+    <!-- Player -->
+    <string name="loading">Loading...</string>
+    <string name="network_slow">Network slow. Switched to %s</string>
+    <string name="quality_restored">Quality restored to %s</string>
+    <string name="stream_unavailable">Stream unavailable</string>
+    <string name="auto_quality">Auto Quality</string>
+    <string name="audio_tracks">Audio Tracks</string>
+    <string name="subtitles">Subtitles</string>
+    <string name="select_resolution">Select Resolution</string>
+
+    <!-- Settings -->
+    <string name="settings">Settings</string>
+    <string name="playback">Playback</string>
+    <string name="display">Display</string>
+    <string name="navigation">Navigation</string>
+    <string name="safety">Safety</string>
+    <string name="cache">Cache</string>
+    <string name="about">About</string>
+    <string name="clear_cache">Clear Cache</string>
+    <string name="clear_now">Clear Now</string>
+    <string name="cache_cleared">Cache cleared</string>
+    <string name="logo_cache_size">Logo cache size</string>
+    <string name="epg">EPG</string>
+
+    <!-- Safety & PIN -->
+    <string name="child_safe_mode">Child Safe Mode</string>
+    <string name="set_pin">Set PIN</string>
+    <string name="enter_pin">Enter PIN</string>
+    <string name="confirm_pin">Confirm PIN</string>
+    <string name="pin_mismatch">PINs do not match</string>
+    <string name="pin_required">PIN Required</string>
+    <string name="pin_incorrect">PIN incorrect</string>
+    <string name="recovery_code">Recovery Code</string>
+    <string name="save_recovery_code">Save this code in a safe place</string>
+    <string name="forgotten_pin">Forgotten PIN?</string>
+
+    <!-- Sleep Timer -->
+    <string name="sleep_timer">Sleep Timer</string>
+    <string name="sleep_timer_enabled">Sleep timer enabled</string>
+    <string name="sleeping_in">Sleeping in %d seconds. Press OK to continue.</string>
+    <string name="add_15_minutes">+ 15 min</string>
+    <string name="add_30_minutes">+ 30 min</string>
+
+    <!-- Reminders -->
+    <string name="reminders">Reminders</string>
+    <string name="set_reminder">Set Reminder</string>
+    <string name="reminder_set">Reminder set for %s</string>
+    <string name="wake_on_reminder">Wake screen on reminder</string>
+
+    <!-- Errors -->
+    <string name="error">Error</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="enable">Enable</string>
+    <string name="disable">Disable</string>
+
+    <!-- Regions -->
+    <string name="select_region">Select Region</string>
+    <string name="all_regions">All Regions</string>
+</resources>

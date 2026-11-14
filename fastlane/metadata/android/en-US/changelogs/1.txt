@@ -1,0 +1,6 @@
+First release.
+• Play your own M3U/M3U8 playlists
+• Full remote control navigation
+• Multiple playlists with priority order
+• Favourites, regions, audio and caption choice
+• Child Safe Mode, channel locks and sleep timer

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Freetia" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:colorBackground">@color/light_bg</item>
+        <item name="android:colorForeground">@color/light_text</item>
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorPrimaryDark">@color/primary_dark</item>
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:textColorPrimary">@color/light_text</item>
+        <item name="android:textColorSecondary">@color/light_text_secondary</item>
+    </style>
+
+    <style name="Theme.Freetia.Dark" parent="android:Theme.Material.NoActionBar">
+        <item name="android:colorBackground">@color/dark_bg</item>
+        <item name="android:colorForeground">@color/dark_text</item>
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorPrimaryDark">@color/primary_dark</item>
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:textColorPrimary">@color/dark_text</item>
+        <item name="android:textColorSecondary">@color/dark_text_secondary</item>
+    </style>
+
+    <style name="Theme.Freetia.HighContrast" parent="Theme.Freetia.Dark">
+        <item name="android:colorPrimary">@color/high_contrast_focus</item>
+        <item name="android:textColorPrimary">#000000</item>
+    </style>
+</resources>
